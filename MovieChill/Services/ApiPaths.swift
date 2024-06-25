@@ -13,19 +13,17 @@ enum APIS {
 
 }
 
-//
-
 class ApiPaths {
     
     private let baseUrl: String = "https://api.themoviedb.org/3/"
-    private let posterUrl: String = "https://image.tmdb.org/t/p/original/"
+    private let posterUrl: String = "https://image.tmdb.org/t/p/original"
     
     func getValue(api: APIS, concatValue: String = "") -> String {
         switch api {
         case .movies:
             return self.baseUrl + "discover/movie"
         case .posters:
-            return self.baseUrl + concatValue
+            return self.posterUrl + concatValue
         }
     }
 }

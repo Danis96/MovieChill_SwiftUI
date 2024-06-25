@@ -19,7 +19,6 @@ struct TopTabsView: View {
                     tabsList
                     tabsItems
                 }
-                
             }
             .toolbar(content: {
                 ToolbarItem(placement: .topBarLeading) {
@@ -31,12 +30,26 @@ struct TopTabsView: View {
             })
             .navigationTitle("Movies")
             .navigationBarTitleDisplayMode(.inline)
+            .onAppear {
+                Task {
+                    await movieVM.fetchMovies()
+                    await fetchBackdropPosters()
+                }
+            }
             
         }
     }
 }
 
 extension TopTabsView {
+    
+    private func fetchBackdropPosters() async {
+        for movie in movieVM.movieList {
+            if let backdrop = movie.fullBackdropPath {
+                await movieVM.fetchMovieBackdropPoster(from: backdrop, for: movie)
+            }
+        }
+    }
     
     private var backgroundView: some View {
         LinearGradient(
@@ -76,8 +89,6 @@ extension TopTabsView {
                             RoundedRectangle(cornerRadius: 10)
                                 .frame(width: 50, height: 5)
                         }
-                        
-                        
                     }
                     .padding()
                     .foregroundColor(tabVM.selectedTab == tab ? .white : .white.opacity(0.6))
@@ -92,7 +103,7 @@ extension TopTabsView {
         VStack {
             switch tabVM.selectedTab.title {
             case "Discover Movies":
-                HomeView(movies: DeveloperPreview.instance.moviesList)
+                MovieView()
                     .environmentObject(movieVM)
             case "Search":
                 SearchView()

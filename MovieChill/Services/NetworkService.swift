@@ -16,18 +16,27 @@ enum NetworkError: Error {
 }
 
 class NetworkService {
-
-    func fetchData<T: Decodable>(from urlString: String, as type: T.Type) async throws -> T {
+    
+    func fetchData<T: Decodable>(from urlString: String, as type: T.Type, queryItems: [URLQueryItem], headers: [String: String]) async throws -> T {
         // Check if the URL string can be converted to a URL
         guard let url = URL(string: urlString) else {
             throw NetworkError.invalidURL
         }
         
+        var components = URLComponents(url: url, resolvingAgainstBaseURL: true)!
+        
+        if !queryItems.isEmpty {
+            components.queryItems = components.queryItems.map { $0 + queryItems } ?? queryItems
+        }
+        
+        var request = URLRequest(url: components.url!)
+        request.httpMethod = "GET"
+        request.timeoutInterval = 10
+        request.allHTTPHeaderFields = headers
+        
         do {
-            // Fetch data from the URL
-            let (data, _) = try await URLSession.shared.data(from: url)
+            let (data, _) = try await URLSession.shared.data(for: request)
             
-            // Decode the data into the specified type
             let decodedData = try JSONDecoder().decode(T.self, from: data)
             
             return decodedData
@@ -37,7 +46,6 @@ class NetworkService {
             throw NetworkError.requestFailed(error)
         }
     }
-    
     
     
     
