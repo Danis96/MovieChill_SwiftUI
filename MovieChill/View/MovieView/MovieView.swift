@@ -14,16 +14,13 @@ struct MovieView: View {
     @State private var currentIndex = 0
     
     var body: some View {
-        VStack() {
+        VStack {
             movieScrollView
                 .padding(.vertical, 40)
                 .sheet(item: $movieVM.movieSheet) { movie in
                     MovieDetailsView(movie: movie)
                         .environmentObject(movieVM)
                 }
-            
-            dotIndicators
-                .padding(20)
             
             HStack {
                 if currentIndex != 0 {

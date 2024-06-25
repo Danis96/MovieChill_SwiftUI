@@ -44,6 +44,7 @@ class MovieRepository {
     }
     
     // MARK: I can refactor this and create selectable queries...
+    // also call again when I came to last two or one movie [MAKE IT LIKE INFINITE SCROLLING]
     private func setQueryItems() -> [URLQueryItem] {
         let queryItems: [URLQueryItem] = [
           URLQueryItem(name: "include_adult", value: "false"),

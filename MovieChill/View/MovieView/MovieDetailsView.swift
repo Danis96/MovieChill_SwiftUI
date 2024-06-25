@@ -13,17 +13,26 @@ struct MovieDetailsView: View {
     let movie: Movie
     
     var body: some View {
-        VStack {
-            
-            if movieVM.isLoadingDetails {
-                ProgressView()
-                    .tint(.white)
-                    .frame(maxWidth: .infinity, alignment: .center)
-            } else {
+        ScrollView {
+            VStack(alignment: .leading) {
                 imageSection
-                Text("\(movie.title)")
+                
+                infoText
+                
+                Divider()
+                
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("Overview")
+                        .font(.headline)
+                    Text(movie.overview)
+                }
+                .padding()
+                
+            }.overlay(alignment: .topLeading) {
+                xMarkButton
             }
-        }
+        }.ignoresSafeArea()
+        
     }
 }
 
@@ -37,17 +46,48 @@ extension MovieDetailsView {
                         .scaledToFill()
                         .frame(width: UIDevice.current.userInterfaceIdiom == .pad ? nil : UIScreen.main.bounds.width)
                         .clipped()
+                        .shadow(radius: 10)
                 }
             }
             
         }
-        .frame(height: 500)
+        .frame(height: 550)
         .tabViewStyle(PageTabViewStyle())
+    }
+    
+    private var xMarkButton: some View {
+        Button(action: {
+            movieVM.movieSheet = nil
+        }, label: {
+            Image(systemName: "xmark")
+                .font(.title2)
+                .foregroundStyle(.black)
+                .frame(width: 45, height: 45)
+                .background(.ultraThinMaterial).clipShape(RoundedRectangle(cornerRadius: 40))
+                .padding(26)
+        })
+    }
+    
+    private var infoText: some View {
+        VStack(alignment: .leading) {
+            Text("\(movie.title)")
+                .font(.title2)
+                .fontWeight(.semibold)
+            
+            HStack {
+                Text(movie.voteAverage.asNumberString())
+                    .font(.headline)
+                Image(systemName: "hands.clap")
+            }
+            
+            Text("Release date: \(movie.releaseDate.formatDateString())")
+                .font(.subheadline)
+            
+        }.padding()
     }
 }
 
 #Preview {
-    TopTabsView()
-        .environmentObject(DeveloperPreview.instance.tabsViewModel)
+    MovieDetailsView(movie: DeveloperPreview.instance.movie)
         .environmentObject(DeveloperPreview.instance.movieViewModel)
 }

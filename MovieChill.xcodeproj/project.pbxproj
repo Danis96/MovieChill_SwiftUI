@@ -27,6 +27,7 @@
 		43D302D12C28E44B007A1C6E /* Double.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43D302D02C28E44B007A1C6E /* Double.swift */; };
 		43D302D42C298D5E007A1C6E /* MovieRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43D302D32C298D5E007A1C6E /* MovieRepository.swift */; };
 		43D302D72C2ACBC2007A1C6E /* MovieDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43D302D62C2ACBC2007A1C6E /* MovieDetailsView.swift */; };
+		43D302D92C2AE5F7007A1C6E /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43D302D82C2AE5F7007A1C6E /* String.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -51,6 +52,7 @@
 		43D302D02C28E44B007A1C6E /* Double.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Double.swift; sourceTree = "<group>"; };
 		43D302D32C298D5E007A1C6E /* MovieRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieRepository.swift; sourceTree = "<group>"; };
 		43D302D62C2ACBC2007A1C6E /* MovieDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieDetailsView.swift; sourceTree = "<group>"; };
+		43D302D82C2AE5F7007A1C6E /* String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -130,6 +132,7 @@
 				43D302B12C28C5CC007A1C6E /* PreviewProvider.swift */,
 				43D302B22C28C5CC007A1C6E /* UIApplication.swift */,
 				43D302D02C28E44B007A1C6E /* Double.swift */,
+				43D302D82C2AE5F7007A1C6E /* String.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -265,6 +268,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				43D302D92C2AE5F7007A1C6E /* String.swift in Sources */,
 				43D302C52C28C913007A1C6E /* MovieCard.swift in Sources */,
 				43D302C32C28C825007A1C6E /* MovieModel.swift in Sources */,
 				43D302D12C28E44B007A1C6E /* Double.swift in Sources */,
