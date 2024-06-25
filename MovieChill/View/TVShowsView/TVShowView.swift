@@ -1,25 +1,26 @@
 //
-//  HomeView.swift
+//  TVShowView.swift
 //  MovieChill
 //
-//  Created by Danis Preldzic on 23. 6. 2024..
+//  Created by Danis Preldzic on 26. 6. 2024..
 //
 
 import SwiftUI
 
-struct MovieView: View {
-    
-    @EnvironmentObject var movieVM: MovieViewModel
+
+struct TVShowView: View {
+
+    @EnvironmentObject var tvShowVM: TVShowsViewModel
     
     @State private var currentIndex = 0
     
     var body: some View {
         VStack {
-            movieScrollView
+            tvShowScrollView
                 .padding(.vertical, 40)
-                .sheet(item: $movieVM.movieSheet) { movie in
-                    MovieDetailsView(movie: movie)
-                        .environmentObject(movieVM)
+                .sheet(item: $tvShowVM.tvShowSheet) { tvShow in
+                    TVShowDetailsView(tvShow: tvShow)
+                        .environmentObject(tvShowVM)
                 }
             
             HStack {
@@ -27,7 +28,7 @@ struct MovieView: View {
                     previousButton()
                 }
                 Spacer()
-                if currentIndex < movieVM.movieList.count - 1 {
+                if currentIndex < tvShowVM.tvShowsList.count - 1 {
                     nextButton()
                 }
             }.padding(.horizontal, 25)
@@ -37,18 +38,18 @@ struct MovieView: View {
 }
 
 
-extension MovieView {
+extension TVShowView {
     
-    private var movieScrollView: some View {
+    private var tvShowScrollView: some View {
         GeometryReader { geometry in
-            if movieVM.isLoading {
+            if tvShowVM.isLoading {
                 ProgressView()
                     .tint(.white)
                     .frame(maxWidth: .infinity, alignment: .center)
             } else {
                 HStack(spacing: 20) {
-                    ForEach(Array(movieVM.movieList.enumerated()), id: \.offset) { index, movie in
-                        moviePosterView(movie: movie, index: index)
+                    ForEach(Array(tvShowVM.tvShowsList.enumerated()), id: \.offset) { index, tvShow in
+                        tvShowPosterView(tvShow: tvShow, index: index)
                             .frame(width: geometry.size.width)
                             .scaleEffect(currentIndex == index ? 1.0 : 0.8)
                             .opacity(currentIndex == index ? 1.0 : 0.0)
@@ -56,7 +57,7 @@ extension MovieView {
                             .onTapGesture {
                                 withAnimation {
                                     currentIndex = index
-                                    movieVM.movieSheet = movie
+                                    tvShowVM.tvShowSheet = tvShow
                                 }
                     }
                 }
@@ -66,9 +67,9 @@ extension MovieView {
     }
 }
 
-private func moviePosterView(movie: Movie, index: Int) -> some View {
+private func tvShowPosterView(tvShow: TVModel, index: Int) -> some View {
     VStack(spacing: 40) {
-        if let posterImage = movie.imageData {
+        if let posterImage = tvShow.imageData {
             posterImage
                 .resizable()
                 .scaledToFill()
@@ -78,14 +79,14 @@ private func moviePosterView(movie: Movie, index: Int) -> some View {
                 .shadow(radius: 15)
         }
         
-        movieTextPoster(movie: movie, index: index)
+        tvShowTextPoster(tvShow: tvShow, index: index)
     }
 }
 
-private func movieTextPoster(movie: Movie, index: Int) -> some View {
+private func tvShowTextPoster(tvShow: TVModel, index: Int) -> some View {
     VStack(alignment: .center, spacing: 10) {
         if currentIndex == index {
-            Text(movie.title)
+            Text(tvShow.name)
                 .frame(maxWidth: UIScreen.main.bounds.width / 1.2)
                 .font(.title)
                 .foregroundStyle(.white)
@@ -95,8 +96,8 @@ private func movieTextPoster(movie: Movie, index: Int) -> some View {
             
             
             HStack {
-                ForEach(movie.genreIDS.prefix(3), id: \.self) { genreID in
-                    Text("\(movieVM.returnGenreName(genreID: genreID))")
+                ForEach(tvShow.genreIDS.prefix(3), id: \.self) { genreID in
+                    Text("\(tvShowVM.returnGenreName(genreID: genreID))")
                         .font(.caption)
                         .foregroundStyle(.white)
                     
@@ -104,7 +105,7 @@ private func movieTextPoster(movie: Movie, index: Int) -> some View {
             }
             
             HStack(alignment: .center) {
-                Text(movie.voteAverage.asNumberString())
+                Text(tvShow.voteAverage.asNumberString())
                     .font(.title)
                     .foregroundStyle(.white)
                 
@@ -127,15 +128,12 @@ private func calculateOffset(cardWidth: CGFloat, spacing: CGFloat, geometry: Geo
 private func nextButton() -> some View {
     Button(action: {
         withAnimation(.spring) {
-            currentIndex = min(currentIndex + 1, movieVM.movieList.count - 1)
-            print("Current Index: \(currentIndex)")
-            if currentIndex == movieVM.movieList.count - 2 {
-                print("Condition for new page api call")
-                movieVM.setPageNumber(value: movieVM.pageNumber + 1)
-                print("New page number: \(movieVM.pageNumber)")
+            currentIndex = min(currentIndex + 1, tvShowVM.tvShowsList.count - 1)
+            if currentIndex == tvShowVM.tvShowsList.count - 2 {
+                tvShowVM.setPageNumber(value: tvShowVM.pageNumber + 1)
                 Task {
-                    await movieVM.fetchMovies(shouldSetLoader: false)
-                    await movieVM.fetchBackdropPosters()
+                    await tvShowVM.fetchTVShows(shouldSetLoader: false)
+                    await tvShowVM.fetchBackdropPosters()
                 }
             }
         }

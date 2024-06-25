@@ -18,7 +18,7 @@ enum NetworkError: Error {
 class NetworkService {
     
     func fetchData<T: Decodable>(from urlString: String, as type: T.Type, queryItems: [URLQueryItem], headers: [String: String]) async throws -> T {
-        // Check if the URL string can be converted to a URL
+       
         guard let url = URL(string: urlString) else {
             throw NetworkError.invalidURL
         }
@@ -37,10 +37,17 @@ class NetworkService {
         do {
             let (data, _) = try await URLSession.shared.data(for: request)
             
+            if let string = String(data: data, encoding: .utf8) {
+                print("Data string: \(string)")
+            } else {
+                print("Failed to parse data")
+            }
+            
             let decodedData = try JSONDecoder().decode(T.self, from: data)
             
             return decodedData
         } catch let error as DecodingError {
+            print(error.localizedDescription)
             throw NetworkError.decodingFailed(error)
         } catch {
             throw NetworkError.requestFailed(error)

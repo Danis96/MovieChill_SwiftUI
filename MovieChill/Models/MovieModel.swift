@@ -10,7 +10,7 @@ import SwiftUI
 
 // MARK: - MovieModel
 struct MovieModel: Identifiable, Codable {
-    var id: String = UUID().uuidString
+    var id: String? = UUID().uuidString
     let page: Int
     let results: [Movie]
     let totalPages, totalResults: Int
@@ -72,4 +72,17 @@ enum OriginalLanguage: String, Codable {
     case en = "en"
     case fr = "fr"
     case ko = "ko"
+    case pl = "pl"
+    case es = "es"
+    case zh = "zh"
+    case ja = "ja"
+    case it = "it"
+    case th = "th"
+    case pt = "pt"
+    case af = "af"
+    case nl = "nl"
+    case de = "de"
+    case tr = "tr"
+    case hi = "hi"
+    case cn = "cn"
 }

@@ -10,14 +10,16 @@ import SwiftUI
 @main
 struct MovieChillApp: App {
     
-    @StateObject private var tabViewModel = TabViewModel()
-    @StateObject private var movieViewModel = MovieViewModel()
+    @StateObject  var tabViewModel = TabViewModel()
+    @StateObject  var movieViewModel = MovieViewModel()
+    @StateObject  var tvShowViewModel = TVShowsViewModel()
     
     var body: some Scene {
         WindowGroup {
             TopTabsView()
-                .environmentObject(TabViewModel())
-                .environmentObject(MovieViewModel())
         }
+        .environmentObject(tabViewModel)
+        .environmentObject(movieViewModel)
+        .environmentObject(tvShowViewModel)
     }
 }

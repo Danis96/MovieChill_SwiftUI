@@ -10,7 +10,7 @@ import Foundation
 enum APIS {
    case movies
    case posters
-
+   case tvShows
 }
 
 class ApiPaths {
@@ -24,6 +24,8 @@ class ApiPaths {
             return self.baseUrl + "discover/movie"
         case .posters:
             return self.posterUrl + concatValue
+        case .tvShows:
+            return self.baseUrl + "discover/tv"
         }
     }
 }

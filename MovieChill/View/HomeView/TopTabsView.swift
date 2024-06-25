@@ -10,6 +10,7 @@ import SwiftUI
 struct TopTabsView: View {
     @EnvironmentObject var tabVM: TabViewModel
     @EnvironmentObject var movieVM: MovieViewModel
+    @EnvironmentObject var tvShowVM: TVShowsViewModel
     
     var body: some View {
         NavigationStack {
@@ -33,7 +34,9 @@ struct TopTabsView: View {
             .onAppear {
                 Task {
                     await movieVM.fetchMovies()
-                    await fetchBackdropPosters()
+                    await movieVM.fetchBackdropPosters()
+                    await tvShowVM.fetchTVShows()
+                    await tvShowVM.fetchBackdropPosters()
                 }
             }
             
@@ -42,14 +45,6 @@ struct TopTabsView: View {
 }
 
 extension TopTabsView {
-    
-    private func fetchBackdropPosters() async {
-        for movie in movieVM.movieList {
-            if let backdrop = movie.fullBackdropPath {
-                await movieVM.fetchMovieBackdropPoster(from: backdrop, for: movie)
-            }
-        }
-    }
     
     private var backgroundView: some View {
         LinearGradient(
@@ -105,10 +100,9 @@ extension TopTabsView {
             case "Discover Movies":
                 MovieView()
                     .environmentObject(movieVM)
-            case "Search":
-                SearchView()
-            case "Profile":
-                ProfileView()
+            case "TV":
+                TVShowView()
+                    .environmentObject(tvShowVM)
             default:
                 Text("Unknown tab")
             }
@@ -117,24 +111,9 @@ extension TopTabsView {
     }
 }
 
-struct SearchView: View {
-    var body: some View {
-        Text("Search View")
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(Color.white)
-    }
-}
-
-struct ProfileView: View {
-    var body: some View {
-        Text("Profile View")
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(Color.white)
-    }
-}
-
 #Preview {
     TopTabsView()
         .environmentObject(DeveloperPreview.instance.tabsViewModel)
+        .environmentObject(DeveloperPreview.instance.movieViewModel)
         .environmentObject(DeveloperPreview.instance.movieViewModel)
 }

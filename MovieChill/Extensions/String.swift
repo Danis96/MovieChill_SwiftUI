@@ -14,7 +14,7 @@ extension String {
         inputFormatter.dateFormat = "yyyy-MM-dd"
         
         guard let date = inputFormatter.date(from: self) else {
-            return self // Return the original string if the format is incorrect
+            return self 
         }
         
         let outputFormatter = DateFormatter()
