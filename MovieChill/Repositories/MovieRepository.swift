@@ -16,7 +16,6 @@ class MovieRepository {
     func getMovies<T: Decodable>(urlString: String, type: T.Type, page: String = "1") async throws -> MovieModel {
         
         print("url: \(urlString)")
-        print("page: \(page)")
         
         do {
             let data  = try await networkService.fetchData(from: urlString, as: MovieModel.self, queryItems: setQueryItems(page: page), headers: headers)
@@ -44,16 +43,34 @@ class MovieRepository {
         }
     }
     
+    func getMovieCredits<T: Decodable>(urlString: String, type: T.Type) async throws -> CreditsModel {
+        
+        print("url: \(urlString)")
+        
+        guard let url = URL(string: urlString) else { throw URLError(.badURL)}
+        
+        do {
+            let data = try await networkService.fetchData(from: urlString, as: CreditsModel.self, queryItems: queryItemsCredits, headers: headers)
+            return data
+        } catch  {
+            throw error
+        }
+    }
+    
     private func setQueryItems(page: String = "1") -> [URLQueryItem] {
         let queryItems: [URLQueryItem] = [
-          URLQueryItem(name: "include_adult", value: "false"),
-          URLQueryItem(name: "include_video", value: "false"),
-          URLQueryItem(name: "language", value: "en-US"),
-          URLQueryItem(name: "page", value: page),
-          URLQueryItem(name: "sort_by", value: "popularity.desc"),
+            URLQueryItem(name: "include_adult", value: "false"),
+            URLQueryItem(name: "include_video", value: "false"),
+            URLQueryItem(name: "language", value: "en-US"),
+            URLQueryItem(name: "page", value: page),
+            URLQueryItem(name: "sort_by", value: "popularity.desc"),
         ]
         return queryItems
     }
+    
+    let queryItemsCredits: [URLQueryItem] = [
+      URLQueryItem(name: "language", value: "en-US"),
+    ]
     
     private var headers: [String: String] {
         return [

@@ -37,11 +37,11 @@ class NetworkService {
         do {
             let (data, _) = try await URLSession.shared.data(for: request)
             
-            if let string = String(data: data, encoding: .utf8) {
-                print("Data string: \(string)")
-            } else {
-                print("Failed to parse data")
-            }
+//            if let string = String(data: data, encoding: .utf8) {
+//                print("Data string: \(string)")
+//            } else {
+//                print("Failed to parse data")
+//            }
             
             let decodedData = try JSONDecoder().decode(T.self, from: data)
             

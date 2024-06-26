@@ -23,6 +23,10 @@ struct MovieDetailsView: View {
                 
                 overviewSection
                 
+                Divider()
+                
+                creditsSection
+                
             }.overlay(alignment: .topLeading) {
                 xMarkButton
             }
@@ -90,6 +94,14 @@ extension MovieDetailsView {
         }
         .padding()
         .foregroundStyle(.textColor2)
+    }
+    
+    private var creditsSection: some View {
+        VStack {
+            ForEach(movieVM.movieCredits) { cast in
+                Text(cast.name)
+            }
+        }
     }
 }
 

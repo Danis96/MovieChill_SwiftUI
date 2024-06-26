@@ -33,6 +33,8 @@
 		43D302DF2C2B8489007A1C6E /* TVShowsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43D302DE2C2B8489007A1C6E /* TVShowsViewModel.swift */; };
 		43D302E22C2B8788007A1C6E /* TVShowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43D302E12C2B8788007A1C6E /* TVShowView.swift */; };
 		43D302E42C2B89B2007A1C6E /* TVShowDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43D302E32C2B89B2007A1C6E /* TVShowDetailsView.swift */; };
+		43D302E62C2C1920007A1C6E /* CreditsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43D302E52C2C1920007A1C6E /* CreditsModel.swift */; };
+		43D302E82C2C1A1F007A1C6E /* GenderModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43D302E72C2C1A1F007A1C6E /* GenderModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -63,6 +65,8 @@
 		43D302DE2C2B8489007A1C6E /* TVShowsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVShowsViewModel.swift; sourceTree = "<group>"; };
 		43D302E12C2B8788007A1C6E /* TVShowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVShowView.swift; sourceTree = "<group>"; };
 		43D302E32C2B89B2007A1C6E /* TVShowDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVShowDetailsView.swift; sourceTree = "<group>"; };
+		43D302E52C2C1920007A1C6E /* CreditsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreditsModel.swift; sourceTree = "<group>"; };
+		43D302E72C2C1A1F007A1C6E /* GenderModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenderModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -190,6 +194,8 @@
 				43D302C62C28CA37007A1C6E /* TabItemModel.swift */,
 				43D302CE2C28DDC2007A1C6E /* GenreModel.swift */,
 				43D302DA2C2B7F6E007A1C6E /* TVModel.swift */,
+				43D302E52C2C1920007A1C6E /* CreditsModel.swift */,
+				43D302E72C2C1A1F007A1C6E /* GenderModel.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -294,6 +300,7 @@
 				43D302D92C2AE5F7007A1C6E /* String.swift in Sources */,
 				43D302DD2C2B8259007A1C6E /* TVRepository.swift in Sources */,
 				43D302C52C28C913007A1C6E /* MovieCard.swift in Sources */,
+				43D302E62C2C1920007A1C6E /* CreditsModel.swift in Sources */,
 				43D302C32C28C825007A1C6E /* MovieModel.swift in Sources */,
 				43D302DB2C2B7F6E007A1C6E /* TVModel.swift in Sources */,
 				43D302DF2C2B8489007A1C6E /* TVShowsViewModel.swift in Sources */,
@@ -304,6 +311,7 @@
 				43D302D42C298D5E007A1C6E /* MovieRepository.swift in Sources */,
 				43D302D72C2ACBC2007A1C6E /* MovieDetailsView.swift in Sources */,
 				43D302C92C28CA5A007A1C6E /* TabViewModel.swift in Sources */,
+				43D302E82C2C1A1F007A1C6E /* GenderModel.swift in Sources */,
 				43D302CD2C28D58B007A1C6E /* MovieViewModel.swift in Sources */,
 				43D302CF2C28DDC2007A1C6E /* GenreModel.swift in Sources */,
 				43D3029C2C28B80B007A1C6E /* MovieChillApp.swift in Sources */,

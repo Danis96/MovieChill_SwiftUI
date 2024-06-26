@@ -55,6 +55,9 @@ extension MovieView {
                             .opacity(currentIndex == index ? 1.0 : 0.0)
                             .animation(.easeInOut(duration: 0.5), value: currentIndex)
                             .onTapGesture {
+                                Task {
+                                    await movieVM.fetchMovieCredits(movieID: String(movie.movieID))
+                                }
                                 withAnimation {
                                     currentIndex = index
                                     movieVM.movieSheet = movie

@@ -14,6 +14,7 @@ class MovieViewModel: ObservableObject {
     @Published var movieList: [Movie] = []
     @Published var movieSheet: Movie?
     @Published var isLoading: Bool = false
+    @Published var movieCredits: [Cast] = []
     
     private var nextPage: String? = ApiPaths().getValue(api: .movies)
     private var constants = MovieChillConstants()
@@ -24,6 +25,8 @@ class MovieViewModel: ObservableObject {
     
     init() {}
     
+    
+    // MARK: movies
     func fetchMovies(shouldSetLoader: Bool = true) async {
         
         guard !isLoading, let urlString = nextPage else { return }
@@ -41,32 +44,6 @@ class MovieViewModel: ObservableObject {
             await handleFetchError(error)
         }
     }
-    
-    func fetchMoviePoster(from fullPosterPath: String, for movie: Movie, should setLoader: Bool = true) async {
-        if setLoader {
-            setIsLoading(to: true)
-        }
-        
-        do {
-            let data = try await movieRepository.getMoviePoster(urlString: fullPosterPath)
-            let image = Image(uiImage: data)
-            await updateMoviePoster(for: movie, with: image)
-        } catch let error {
-            await handleFetchError(error)
-        }
-    }
-    
-    func fetchMovieBackdropPoster(from fullBackdropPosterPath: String, for movie: Movie) async {
-        do {
-            let data = try await movieRepository.getMoviePoster(urlString: fullBackdropPosterPath)
-            let image = Image(uiImage: data)
-            await updateMovieBackdropPoster(for: movie, with: image)
-        } catch let error {
-            await handleFetchError(error)
-        }
-    }
-    
-    
     
     private func updateMovieList(with data: MovieModel, should setLoader: Bool = true) async {
         let updatedMovies = data.results.map { movie in
@@ -86,11 +63,37 @@ class MovieViewModel: ObservableObject {
     }
     
     
+    // MARK: movie poster
+    func fetchMoviePoster(from fullPosterPath: String, for movie: Movie, should setLoader: Bool = true) async {
+        if setLoader {
+            setIsLoading(to: true)
+        }
+        
+        do {
+            let data = try await movieRepository.getMoviePoster(urlString: fullPosterPath)
+            let image = Image(uiImage: data)
+            await updateMoviePoster(for: movie, with: image)
+        } catch let error {
+            await handleFetchError(error)
+        }
+    }
+    
     private func updateMoviePoster(for movie: Movie, with image: Image) async {
         if let index = movieList.firstIndex(where: { $0.id == movie.id }) {
             var updatedMovie = movie
             updatedMovie.imageData = image
             movieList[index] = updatedMovie
+        }
+    }
+    
+    // MARK: movie backdrop poster
+    func fetchMovieBackdropPoster(from fullBackdropPosterPath: String, for movie: Movie) async {
+        do {
+            let data = try await movieRepository.getMoviePoster(urlString: fullBackdropPosterPath)
+            let image = Image(uiImage: data)
+            await updateMovieBackdropPoster(for: movie, with: image)
+        } catch let error {
+            await handleFetchError(error)
         }
     }
     
@@ -121,6 +124,55 @@ class MovieViewModel: ObservableObject {
         print("Error fetching movies: \(error.localizedDescription)")
         if let networkError = error as? NetworkError {
             print("Detailed Error: \(networkError.localizedDescription)")
+        }
+    }
+    
+    
+    // MARK: credits / cast
+    func fetchMovieCredits(movieID: String) async {
+        
+        self.movieCredits.removeAll()
+        
+        let urlString = ApiPaths().getValue(api: .movieCredits, concatValue: movieID)
+        
+        do {
+            let data = try await movieRepository.getMovieCredits(urlString: urlString, type: CreditsModel.self)
+            await updateMovieCredits(with: data)
+        } catch let error {
+            await handleFetchError(error)
+        }
+    }
+    
+    private func updateMovieCredits(with data: CreditsModel) async {
+        
+        var updatedCredits = data.cast.map { cast in
+            cast.updateProfilePath(newPathProfile: ApiPaths().getValue(api: .posters, concatValue: cast.profilePath ?? ""))
+        }
+        
+        self.movieCredits.append(contentsOf: updatedCredits)
+        
+        for credit in updatedCredits {
+            if let poster = credit.profileFullPath {
+                await fetchCastPoster(from: poster, for: credit)
+            }
+        }
+    }
+    
+    func fetchCastPoster(from fullPosterPath: String, for cast: Cast) async {
+        do {
+            let data = try await movieRepository.getMoviePoster(urlString: fullPosterPath)
+            let image = Image(uiImage: data)
+            await updateCastPoster(for: cast, with: image)
+        } catch let error {
+            await handleFetchError(error)
+        }
+    }
+    
+    private func updateCastPoster(for cast: Cast, with image: Image) async {
+        if let index = movieCredits.firstIndex(where: { $0.id == cast.id }) {
+            var updatedCast = cast
+            updatedCast.imageData = image
+            movieCredits[index] = updatedCast
         }
     }
     

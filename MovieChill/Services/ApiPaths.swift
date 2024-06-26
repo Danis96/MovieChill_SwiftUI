@@ -11,6 +11,7 @@ enum APIS {
    case movies
    case posters
    case tvShows
+   case movieCredits
 }
 
 class ApiPaths {
@@ -26,6 +27,8 @@ class ApiPaths {
             return self.posterUrl + concatValue
         case .tvShows:
             return self.baseUrl + "discover/tv"
+        case .movieCredits:
+            return self.baseUrl + "movie/\(concatValue)/credits"
         }
     }
 }
