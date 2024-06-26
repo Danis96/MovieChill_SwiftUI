@@ -25,7 +25,7 @@ struct MovieDetailsView: View {
                 
                 Divider()
                 
-                creditsSection
+                CreditsSectionView()
                 
             }.overlay(alignment: .topLeading) {
                 xMarkButton
@@ -83,7 +83,7 @@ extension MovieDetailsView {
                 .font(.subheadline)
             
         }.padding()
-         .foregroundStyle(.textColor2)
+            .foregroundStyle(.textColor2)
     }
     
     private var overviewSection: some View {
@@ -96,13 +96,8 @@ extension MovieDetailsView {
         .foregroundStyle(.textColor2)
     }
     
-    private var creditsSection: some View {
-        VStack {
-            ForEach(movieVM.movieCredits) { cast in
-                Text(cast.name)
-            }
-        }
-    }
+    
+    
 }
 
 #Preview {
