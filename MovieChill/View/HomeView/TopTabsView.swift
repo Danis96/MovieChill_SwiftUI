@@ -29,7 +29,6 @@ struct TopTabsView: View {
                     toolbarSearchItem
                 }
             })
-            .navigationTitle("Movies")
             .navigationBarTitleDisplayMode(.inline)
             .onAppear {
                 Task {
@@ -48,7 +47,7 @@ extension TopTabsView {
     
     private var backgroundView: some View {
         LinearGradient(
-            gradient: Gradient(colors: [Color.init(red: 101 / 255, green: 157 / 255, blue: 213 / 255), Color.init(red: 66 / 255, green: 80 / 255, blue: 158 / 255)]),
+            gradient: Gradient(colors: [Color("BackgroundBlue1"),Color("BackgroundBlue2")]),
             startPoint: .topLeading,
             endPoint: .bottomTrailing
         ).ignoresSafeArea()
@@ -57,14 +56,14 @@ extension TopTabsView {
     private var toolbarMenuItem: some View {
         Button(action: {}, label: {
             Image(systemName: "pedal.clutch.fill")
-                .foregroundStyle(.white)
+                .foregroundStyle(Color("TextColor"))
         })
     }
     
     private var toolbarSearchItem: some View {
         Button(action: {}, label: {
             Image(systemName: "waveform.badge.magnifyingglass")
-                .foregroundStyle(.white)
+                .foregroundStyle(Color("TextColor"))
         })
     }
     
@@ -86,7 +85,7 @@ extension TopTabsView {
                         }
                     }
                     .padding()
-                    .foregroundColor(tabVM.selectedTab == tab ? .white : .white.opacity(0.6))
+                    .foregroundColor(tabVM.selectedTab == tab ? Color("TextColor") : Color("TextColor").opacity(0.6))
                 }
                 .frame(maxWidth: .infinity)
             }
@@ -115,5 +114,5 @@ extension TopTabsView {
     TopTabsView()
         .environmentObject(DeveloperPreview.instance.tabsViewModel)
         .environmentObject(DeveloperPreview.instance.movieViewModel)
-        .environmentObject(DeveloperPreview.instance.movieViewModel)
+        .environmentObject(DeveloperPreview.instance.tvShowViewModel)
 }

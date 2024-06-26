@@ -21,12 +21,7 @@ struct MovieDetailsView: View {
                 
                 Divider()
                 
-                VStack(alignment: .leading, spacing: 10) {
-                    Text("Overview")
-                        .font(.headline)
-                    Text(movie.overview)
-                }
-                .padding()
+                overviewSection
                 
             }.overlay(alignment: .topLeading) {
                 xMarkButton
@@ -84,6 +79,17 @@ extension MovieDetailsView {
                 .font(.subheadline)
             
         }.padding()
+         .foregroundStyle(.textColor2)
+    }
+    
+    private var overviewSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("Overview")
+                .font(.headline)
+            Text(movie.overview)
+        }
+        .padding()
+        .foregroundStyle(.textColor2)
     }
 }
 

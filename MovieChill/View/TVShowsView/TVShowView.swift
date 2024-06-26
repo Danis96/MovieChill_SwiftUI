@@ -32,6 +32,7 @@ struct TVShowView: View {
                     nextButton()
                 }
             }.padding(.horizontal, 25)
+             .foregroundStyle(Color("TextColor"))
             
         }.animation(.easeInOut(duration: 0.5), value: currentIndex)
     }
@@ -44,7 +45,7 @@ extension TVShowView {
         GeometryReader { geometry in
             if tvShowVM.isLoading {
                 ProgressView()
-                    .tint(.white)
+                    .tint(Color("TextColor"))
                     .frame(maxWidth: .infinity, alignment: .center)
             } else {
                 HStack(spacing: 20) {
@@ -89,31 +90,24 @@ private func tvShowTextPoster(tvShow: TVModel, index: Int) -> some View {
             Text(tvShow.name)
                 .frame(maxWidth: UIScreen.main.bounds.width / 1.2)
                 .font(.title)
-                .foregroundStyle(.white)
                 .fixedSize(horizontal: false, vertical: true)
                 .multilineTextAlignment(.center)
-            
-            
             
             HStack {
                 ForEach(tvShow.genreIDS.prefix(3), id: \.self) { genreID in
                     Text("\(tvShowVM.returnGenreName(genreID: genreID))")
                         .font(.caption)
-                        .foregroundStyle(.white)
-                    
                 }
             }
             
             HStack(alignment: .center) {
                 Text(tvShow.voteAverage.asNumberString())
                     .font(.title)
-                    .foregroundStyle(.white)
                 
                 Image(systemName: "hands.clap.fill")
-                    .foregroundStyle(.white)
             }
         }
-    }
+    }.foregroundStyle(Color("TextColor"))
 }
 
 private func calculateOffset(cardWidth: CGFloat, spacing: CGFloat, geometry: GeometryProxy) -> CGFloat {
@@ -142,7 +136,6 @@ private func nextButton() -> some View {
             .font(.headline)
             .frame(width: 100)
     }).buttonStyle(.bordered)
-        .foregroundStyle(.white.opacity(0.7))
 }
 
 private func previousButton() -> some View {
@@ -155,7 +148,7 @@ private func previousButton() -> some View {
             .font(.headline)
             .frame(width: 100)
     }).buttonStyle(.bordered)
-        .foregroundStyle(.white.opacity(0.7))
+
 }
 
 }
@@ -164,4 +157,5 @@ private func previousButton() -> some View {
     TopTabsView()
         .environmentObject(DeveloperPreview.instance.movieViewModel)
         .environmentObject(DeveloperPreview.instance.tabsViewModel)
+        .environmentObject(DeveloperPreview.instance.tvShowViewModel)
 }

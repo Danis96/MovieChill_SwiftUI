@@ -31,6 +31,7 @@ struct MovieView: View {
                     nextButton()
                 }
             }.padding(.horizontal, 25)
+             .foregroundStyle(Color("TextColor").opacity(0.7))
             
         }.animation(.easeInOut(duration: 0.5), value: currentIndex)
     }
@@ -43,7 +44,7 @@ extension MovieView {
         GeometryReader { geometry in
             if movieVM.isLoading {
                 ProgressView()
-                    .tint(.white)
+                    .tint(Color("TextColor"))
                     .frame(maxWidth: .infinity, alignment: .center)
             } else {
                 HStack(spacing: 20) {
@@ -88,31 +89,24 @@ private func movieTextPoster(movie: Movie, index: Int) -> some View {
             Text(movie.title)
                 .frame(maxWidth: UIScreen.main.bounds.width / 1.2)
                 .font(.title)
-                .foregroundStyle(.white)
                 .fixedSize(horizontal: false, vertical: true)
                 .multilineTextAlignment(.center)
-            
-            
             
             HStack {
                 ForEach(movie.genreIDS.prefix(3), id: \.self) { genreID in
                     Text("\(movieVM.returnGenreName(genreID: genreID))")
                         .font(.caption)
-                        .foregroundStyle(.white)
-                    
                 }
             }
             
             HStack(alignment: .center) {
                 Text(movie.voteAverage.asNumberString())
                     .font(.title)
-                    .foregroundStyle(.white)
-                
+                    
                 Image(systemName: "hands.clap.fill")
-                    .foregroundStyle(.white)
             }
         }
-    }
+    }.foregroundStyle(Color("TextColor"))
 }
 
 private func calculateOffset(cardWidth: CGFloat, spacing: CGFloat, geometry: GeometryProxy) -> CGFloat {
@@ -121,18 +115,13 @@ private func calculateOffset(cardWidth: CGFloat, spacing: CGFloat, geometry: Geo
     
     return indexOffset + centeredOffset
 }
-    
-
 
 private func nextButton() -> some View {
     Button(action: {
         withAnimation(.spring) {
             currentIndex = min(currentIndex + 1, movieVM.movieList.count - 1)
-            print("Current Index: \(currentIndex)")
             if currentIndex == movieVM.movieList.count - 2 {
-                print("Condition for new page api call")
                 movieVM.setPageNumber(value: movieVM.pageNumber + 1)
-                print("New page number: \(movieVM.pageNumber)")
                 Task {
                     await movieVM.fetchMovies(shouldSetLoader: false)
                     await movieVM.fetchBackdropPosters()
@@ -144,7 +133,7 @@ private func nextButton() -> some View {
             .font(.headline)
             .frame(width: 100)
     }).buttonStyle(.bordered)
-        .foregroundStyle(.white.opacity(0.7))
+        
 }
 
 private func previousButton() -> some View {
@@ -157,7 +146,7 @@ private func previousButton() -> some View {
             .font(.headline)
             .frame(width: 100)
     }).buttonStyle(.bordered)
-        .foregroundStyle(.white.opacity(0.7))
+        
 }
 
 }
@@ -166,4 +155,5 @@ private func previousButton() -> some View {
     TopTabsView()
         .environmentObject(DeveloperPreview.instance.movieViewModel)
         .environmentObject(DeveloperPreview.instance.tabsViewModel)
+        .environmentObject(DeveloperPreview.instance.tvShowViewModel)
 }

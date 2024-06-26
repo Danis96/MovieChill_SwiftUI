@@ -85,4 +85,5 @@ enum OriginalLanguage: String, Codable {
     case tr = "tr"
     case hi = "hi"
     case cn = "cn"
+    case tl = "tl"
 }
