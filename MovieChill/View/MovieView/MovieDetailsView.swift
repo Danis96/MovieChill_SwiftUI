@@ -10,28 +10,32 @@ import SwiftUI
 struct MovieDetailsView: View {
     
     @EnvironmentObject private var movieVM: MovieViewModel
+    @EnvironmentObject private var reviewsVM: ReviewsViewModel
     let movie: Movie
+
+    private let locale = LocaleStrings()
     
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading) {
-                imageSection
-                
-                infoText
-                
-                Divider()
-                
-                overviewSection
-                
-                Divider()
-                
-                CreditsSectionView()
-                
-            }.overlay(alignment: .topLeading) {
-                xMarkButton
-            }
-        }.ignoresSafeArea()
-        
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading) {
+                    imageSection
+                    
+                    infoText
+                    
+                    Divider()
+                    
+                    overviewSection
+                    
+                    Divider()
+                    
+                    CreditsSectionView(credits: movieVM.returnCreditsBasedOnShowMore(), isTV: false)
+                    
+                }.overlay(alignment: .topLeading) {
+                    xMarkButton
+                }
+            }.ignoresSafeArea()
+        }
     }
 }
 
@@ -48,7 +52,6 @@ extension MovieDetailsView {
                         .shadow(radius: 10)
                 }
             }
-            
         }
         .frame(height: 550)
         .tabViewStyle(PageTabViewStyle())
@@ -68,27 +71,46 @@ extension MovieDetailsView {
     }
     
     private var infoText: some View {
-        VStack(alignment: .leading) {
-            Text("\(movie.title)")
-                .font(.title2)
-                .fontWeight(.semibold)
+        HStack(alignment: .bottom) {
+            VStack(alignment: .leading) {
+                Text("\(movie.title)")
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                
+                HStack {
+                    Text(movie.voteAverage.asNumberString())
+                        .font(.headline)
+                    Image(systemName: "hands.clap")
+                }
+                
+                Text("\(locale.movieDetailsReleaseDate) \(movie.releaseDate.formatDateString())")
+                    .font(.subheadline)
+                
+            }
+            .foregroundStyle(.textColor2)
             
-            HStack {
-                Text(movie.voteAverage.asNumberString())
-                    .font(.headline)
-                Image(systemName: "hands.clap")
+            Spacer()
+            
+            if reviewsVM.isLoading {
+                ProgressView()
+            } else {
+                ReviewInfoComponent(count: reviewsVM.reviewsList.count) {
+                    if reviewsVM.reviewsList.isEmpty {
+                        reviewsVM.showNoReviewsAlert.toggle()
+                    } else {
+                        reviewsVM.navigateToReviewsList()
+                    }
+                }
+                .alert(locale.movieDetailsnoReviews, isPresented: $reviewsVM.showNoReviewsAlert) {}
             }
             
-            Text("Release date: \(movie.releaseDate.formatDateString())")
-                .font(.subheadline)
-            
+            navigationToReviews
         }.padding()
-            .foregroundStyle(.textColor2)
     }
     
     private var overviewSection: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("Overview")
+            Text(locale.movieDetailsOverview)
                 .font(.headline)
             Text(movie.overview)
         }
@@ -96,11 +118,15 @@ extension MovieDetailsView {
         .foregroundStyle(.textColor2)
     }
     
-    
-    
+    private var navigationToReviews: some View {
+        NavigationLink(destination: ReviewsView(reviews: reviewsVM.reviewsList), isActive: $reviewsVM.navigateToReviews) {
+            EmptyView()
+        }
+    }
 }
 
 #Preview {
     MovieDetailsView(movie: DeveloperPreview.instance.movie)
         .environmentObject(DeveloperPreview.instance.movieViewModel)
+        .environmentObject(DeveloperPreview.instance.reviewsViewModel)
 }

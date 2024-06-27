@@ -9,10 +9,12 @@ import SwiftUI
 
 
 struct TVShowView: View {
-
+    
     @EnvironmentObject var tvShowVM: TVShowsViewModel
+    @EnvironmentObject var reviewsVM: ReviewsViewModel
     
     @State private var currentIndex = 0
+    private var locale = LocaleStrings()
     
     var body: some View {
         VStack {
@@ -25,14 +27,14 @@ struct TVShowView: View {
             
             HStack {
                 if currentIndex != 0 {
-                    previousButton()
+                    previousButton
                 }
                 Spacer()
                 if currentIndex < tvShowVM.tvShowsList.count - 1 {
-                    nextButton()
+                    nextButton
                 }
             }.padding(.horizontal, 25)
-             .foregroundStyle(Color("TextColor"))
+                .foregroundStyle(Color("TextColor"))
             
         }.animation(.easeInOut(duration: 0.5), value: currentIndex)
     }
@@ -48,79 +50,55 @@ extension TVShowView {
                     .tint(Color("TextColor"))
                     .frame(maxWidth: .infinity, alignment: .center)
             } else {
-                HStack(spacing: 20) {
-                    ForEach(Array(tvShowVM.tvShowsList.enumerated()), id: \.offset) { index, tvShow in
-                        tvShowPosterView(tvShow: tvShow, index: index)
-                            .frame(width: geometry.size.width)
-                            .scaleEffect(currentIndex == index ? 1.0 : 0.8)
-                            .opacity(currentIndex == index ? 1.0 : 0.0)
-                            .animation(.easeInOut(duration: 0.5), value: currentIndex)
-                            .onTapGesture {
-                                withAnimation {
-                                    currentIndex = index
-                                    tvShowVM.tvShowSheet = tvShow
-                                }
-                    }
-                }
+                tvScrollViewContent(geometry: geometry)
             }
-                .offset(x: CGFloat(currentIndex) * -(geometry.size.width + 20))
         }
     }
-}
-
-private func tvShowPosterView(tvShow: TVModel, index: Int) -> some View {
-    VStack(spacing: 40) {
-        if let posterImage = tvShow.imageData {
-            posterImage
-                .resizable()
-                .scaledToFill()
-                .clipped()
-                .frame(width: 200, height: 300)
-                .cornerRadius(10)
-                .shadow(radius: 15)
+    
+    private func tvScrollViewContent(geometry: GeometryProxy) -> some View {
+        HStack(spacing: 20) {
+            ForEach(Array(tvShowVM.tvShowsList.enumerated()), id: \.offset) { index, tvShow in
+                ItemCardView(
+                    image: tvShow.imageData ?? Image(systemName: "arrow.down"),
+                    currentIndex: currentIndex,
+                    index: index,
+                    geometry: geometry,
+                    onTapPressed: {
+                     await onCardPressed(tvShow: tvShow, index: index)
+                    },
+                    title: tvShow.name,
+                    voteAverage: tvShow.voteAverage.asNumberString(),
+                    genreIDS: tvShow.genreIDS)
+            }
         }
-        
-        tvShowTextPoster(tvShow: tvShow, index: index)
+        .offset(x: CGFloat(currentIndex) * -(geometry.size.width + 20))
     }
-}
-
-private func tvShowTextPoster(tvShow: TVModel, index: Int) -> some View {
-    VStack(alignment: .center, spacing: 10) {
-        if currentIndex == index {
-            Text(tvShow.name)
-                .frame(maxWidth: UIScreen.main.bounds.width / 1.2)
-                .font(.title)
-                .fixedSize(horizontal: false, vertical: true)
-                .multilineTextAlignment(.center)
-            
-            HStack {
-                ForEach(tvShow.genreIDS.prefix(3), id: \.self) { genreID in
-                    Text("\(tvShowVM.returnGenreName(genreID: genreID))")
-                        .font(.caption)
-                }
-            }
-            
-            HStack(alignment: .center) {
-                Text(tvShow.voteAverage.asNumberString())
-                    .font(.title)
-                
-                Image(systemName: "hands.clap.fill")
-            }
+    
+    private func onCardPressed(tvShow: TVModel, index: Int) async {
+        Task {
+            await tvShowVM.fetchCredits(for: String(tvShow.televisionID))
+            await reviewsVM.fetchReviews(for: tvShow.televisionID, isTv: true)
         }
-    }.foregroundStyle(Color("TextColor"))
-}
-
-private func calculateOffset(cardWidth: CGFloat, spacing: CGFloat, geometry: GeometryProxy) -> CGFloat {
-    let centeredOffset = (geometry.size.width - cardWidth) / 2
-    let indexOffset = CGFloat(currentIndex) * -(cardWidth + spacing)
+        withAnimation {
+            currentIndex = index
+            tvShowVM.tvShowSheet = tvShow
+            tvShowVM.showMoreCast = false
+        }
+    }
     
-    return indexOffset + centeredOffset
-}
+    private var nextButton: some View {
+        Button(action: {
+            Task {
+                await nextButtonAction()
+            }
+        }, label: {
+            Text(locale.tvShowViewBtnNext)
+                .font(.headline)
+                .frame(width: 100)
+        }).buttonStyle(.bordered)
+    }
     
-
-
-private func nextButton() -> some View {
-    Button(action: {
+    private func nextButtonAction() async {
         withAnimation(.spring) {
             currentIndex = min(currentIndex + 1, tvShowVM.tvShowsList.count - 1)
             if currentIndex == tvShowVM.tvShowsList.count - 2 {
@@ -131,26 +109,20 @@ private func nextButton() -> some View {
                 }
             }
         }
-    }, label: {
-        Text("Next")
-            .font(.headline)
-            .frame(width: 100)
-    }).buttonStyle(.bordered)
-}
-
-private func previousButton() -> some View {
-    Button(action: {
-        withAnimation(.spring) {
-            currentIndex = max(currentIndex - 1, 0)
-        }
-    }, label: {
-        Text("Previous")
-            .font(.headline)
-            .frame(width: 100)
-    }).buttonStyle(.bordered)
-
-}
-
+    }
+    
+    private var previousButton: some View {
+        Button(action: {
+            withAnimation(.spring) {
+                currentIndex = max(currentIndex - 1, 0)
+            }
+        }, label: {
+            Text(locale.tvShowViewBtnPrevious)
+                .font(.headline)
+                .frame(width: 100)
+        }).buttonStyle(.bordered)
+    }
+    
 }
 
 #Preview {
@@ -158,4 +130,6 @@ private func previousButton() -> some View {
         .environmentObject(DeveloperPreview.instance.movieViewModel)
         .environmentObject(DeveloperPreview.instance.tabsViewModel)
         .environmentObject(DeveloperPreview.instance.tvShowViewModel)
+        .environmentObject(DeveloperPreview.instance.reviewsViewModel)
+    
 }

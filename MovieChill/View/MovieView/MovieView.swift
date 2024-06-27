@@ -10,8 +10,10 @@ import SwiftUI
 struct MovieView: View {
     
     @EnvironmentObject var movieVM: MovieViewModel
+    @EnvironmentObject var reviewsVM: ReviewsViewModel
     
     @State private var currentIndex = 0
+    private var locale = LocaleStrings()
     
     var body: some View {
         VStack {
@@ -19,19 +21,18 @@ struct MovieView: View {
                 .padding(.vertical, 40)
                 .sheet(item: $movieVM.movieSheet) { movie in
                     MovieDetailsView(movie: movie)
-                        .environmentObject(movieVM)
                 }
             
             HStack {
                 if currentIndex != 0 {
-                    previousButton()
+                    previousButton
                 }
                 Spacer()
                 if currentIndex < movieVM.movieList.count - 1 {
-                    nextButton()
+                    nextButton
                 }
             }.padding(.horizontal, 25)
-             .foregroundStyle(Color("TextColor").opacity(0.7))
+                .foregroundStyle(Color("TextColor").opacity(0.7))
             
         }.animation(.easeInOut(duration: 0.5), value: currentIndex)
     }
@@ -47,80 +48,62 @@ extension MovieView {
                     .tint(Color("TextColor"))
                     .frame(maxWidth: .infinity, alignment: .center)
             } else {
-                HStack(spacing: 20) {
-                    ForEach(Array(movieVM.movieList.enumerated()), id: \.offset) { index, movie in
-                        moviePosterView(movie: movie, index: index)
-                            .frame(width: geometry.size.width)
-                            .scaleEffect(currentIndex == index ? 1.0 : 0.8)
-                            .opacity(currentIndex == index ? 1.0 : 0.0)
-                            .animation(.easeInOut(duration: 0.5), value: currentIndex)
-                            .onTapGesture {
-                                Task {
-                                    await movieVM.fetchMovieCredits(movieID: String(movie.movieID))
-                                }
-                                withAnimation {
-                                    currentIndex = index
-                                    movieVM.movieSheet = movie
-                                }
-                    }
-                }
+                movieScrollViewContent(geometry: geometry)
             }
-                .offset(x: CGFloat(currentIndex) * -(geometry.size.width + 20))
         }
     }
-}
-
-private func moviePosterView(movie: Movie, index: Int) -> some View {
-    VStack(spacing: 40) {
-        if let posterImage = movie.imageData {
-            posterImage
-                .resizable()
-                .scaledToFill()
-                .clipped()
-                .frame(width: 200, height: 300)
-                .cornerRadius(10)
-                .shadow(radius: 15)
-        }
-        
-        movieTextPoster(movie: movie, index: index)
-    }
-}
-
-private func movieTextPoster(movie: Movie, index: Int) -> some View {
-    VStack(alignment: .center, spacing: 10) {
-        if currentIndex == index {
-            Text(movie.title)
-                .frame(maxWidth: UIScreen.main.bounds.width / 1.2)
-                .font(.title)
-                .fixedSize(horizontal: false, vertical: true)
-                .multilineTextAlignment(.center)
-            
-            HStack {
-                ForEach(movie.genreIDS.prefix(3), id: \.self) { genreID in
-                    Text("\(movieVM.returnGenreName(genreID: genreID))")
-                        .font(.caption)
-                }
-            }
-            
-            HStack(alignment: .center) {
-                Text(movie.voteAverage.asNumberString())
-                    .font(.title)
-                    
-                Image(systemName: "hands.clap.fill")
-            }
-        }
-    }.foregroundStyle(Color("TextColor"))
-}
-
-private func calculateOffset(cardWidth: CGFloat, spacing: CGFloat, geometry: GeometryProxy) -> CGFloat {
-    let centeredOffset = (geometry.size.width - cardWidth) / 2
-    let indexOffset = CGFloat(currentIndex) * -(cardWidth + spacing)
     
-    return indexOffset + centeredOffset
-}
-
-private func nextButton() -> some View {
-    Button(action: {
+    private func movieScrollViewContent(geometry: GeometryProxy) -> some View {
+        HStack(spacing: 20) {
+            ForEach(Array(movieVM.movieList.enumerated()), id: \.offset) { index, movie in
+                ItemCardView(
+                    image: movie.imageData ?? Image(systemName: "arrow.down"),
+                    currentIndex: currentIndex,
+                    index: index,
+                    geometry: geometry,
+                    onTapPressed: {
+                        // MARK: Emir pitanje: taskovi
+                        // Kreiran je task unutar componente | da li je to oke za raditi ili sve fje sto dolaze trebaju biti vec definisane
+                        
+                        /*
+                           onCardPressed vec u sebi ima definisan Task ali i unutar komponente imam def task na ovu fju
+                           redundant???
+                         */
+                        await onCardPressed(movie: movie, index: index)
+                    },
+                    title: movie.title,
+                    voteAverage: movie.voteAverage.asNumberString(),
+                    genreIDS: movie.genreIDS)
+                
+            }
+        }
+        .offset(x: CGFloat(currentIndex) * -(geometry.size.width + 20))
+    }
+    
+    private func onCardPressed(movie: Movie, index: Int) async {
+        Task {
+            await movieVM.fetchCredits(for: String(movie.movieID))
+            await reviewsVM.fetchReviews(for: movie.movieID)
+        }
+        withAnimation {
+            currentIndex = index
+            movieVM.movieSheet = movie
+            movieVM.showMoreCast = false
+        }
+    }
+    
+    private var nextButton: some View {
+        Button(action: {
+            Task {await nextButtonAction()}
+        }, label: {
+            Text(locale.movieViewBtnNext)
+                .font(.headline)
+                .frame(width: 100)
+        }).buttonStyle(.bordered)
+        
+    }
+    
+    private func nextButtonAction() async {
         withAnimation(.spring) {
             currentIndex = min(currentIndex + 1, movieVM.movieList.count - 1)
             if currentIndex == movieVM.movieList.count - 2 {
@@ -131,27 +114,17 @@ private func nextButton() -> some View {
                 }
             }
         }
-    }, label: {
-        Text("Next")
-            .font(.headline)
-            .frame(width: 100)
-    }).buttonStyle(.bordered)
-        
-}
-
-private func previousButton() -> some View {
-    Button(action: {
-        withAnimation(.spring) {
-            currentIndex = max(currentIndex - 1, 0)
-        }
-    }, label: {
-        Text("Previous")
-            .font(.headline)
-            .frame(width: 100)
-    }).buttonStyle(.bordered)
-        
-}
-
+    }
+    
+    private var previousButton: some View {
+        Button(action: {
+            withAnimation(.spring) {currentIndex = max(currentIndex - 1, 0)}
+        }, label: {
+            Text(locale.movieViewBtnPrevious)
+                .font(.headline)
+                .frame(width: 100)
+        }).buttonStyle(.bordered)
+    }
 }
 
 #Preview {
@@ -159,4 +132,5 @@ private func previousButton() -> some View {
         .environmentObject(DeveloperPreview.instance.movieViewModel)
         .environmentObject(DeveloperPreview.instance.tabsViewModel)
         .environmentObject(DeveloperPreview.instance.tvShowViewModel)
+        .environmentObject(DeveloperPreview.instance.reviewsViewModel)
 }

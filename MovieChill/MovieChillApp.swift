@@ -13,13 +13,17 @@ struct MovieChillApp: App {
     @StateObject  var tabViewModel = TabViewModel()
     @StateObject  var movieViewModel = MovieViewModel()
     @StateObject  var tvShowViewModel = TVShowsViewModel()
+    @StateObject  var reviewsViewModel = ReviewsViewModel()
     
     var body: some Scene {
         WindowGroup {
-            TopTabsView()
+            NavigationStack {
+                TopTabsView()
+            }
         }
         .environmentObject(tabViewModel)
         .environmentObject(movieViewModel)
         .environmentObject(tvShowViewModel)
+        .environmentObject(reviewsViewModel)
     }
 }

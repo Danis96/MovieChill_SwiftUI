@@ -11,29 +11,32 @@ import SwiftUI
 struct TVShowDetailsView: View {
     
     @EnvironmentObject private var tvShowVM: TVShowsViewModel
+    @EnvironmentObject private var reviewsVM: ReviewsViewModel
     let tvShow: TVModel
     
+    private let locale = LocaleStrings()
+    
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading) {
-                imageSection
-                
-                infoText
-                
-                Divider()
-                
-                VStack(alignment: .leading, spacing: 10) {
-                    Text("Overview")
-                        .font(.headline)
-                    Text(tvShow.overview)
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading) {
+                    imageSection
+                    
+                    infoText
+                    
+                    Divider()
+                    
+                    overviewSection
+                    
+                    Divider()
+                    
+                    CreditsSectionView(credits: tvShowVM.returnCreditsBasedOnShowMore(), isTV: true)
+                    
+                }.overlay(alignment: .topLeading) {
+                    xMarkButton
                 }
-                .padding()
-                
-            }.overlay(alignment: .topLeading) {
-                xMarkButton
-            }
-        }.ignoresSafeArea()
-        
+            }.ignoresSafeArea()
+        }
     }
 }
 
@@ -50,10 +53,18 @@ extension TVShowDetailsView {
                         .shadow(radius: 10)
                 }
             }
-            
         }
         .frame(height: 550)
         .tabViewStyle(PageTabViewStyle())
+    }
+    
+    private var overviewSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text(locale.tvDetailsOverview)
+                .font(.headline)
+            Text(tvShow.overview)
+        }
+        .padding()
     }
     
     private var xMarkButton: some View {
@@ -70,25 +81,50 @@ extension TVShowDetailsView {
     }
     
     private var infoText: some View {
-        VStack(alignment: .leading) {
-            Text("\(tvShow.name)")
-                .font(.title2)
-                .fontWeight(.semibold)
-            
-            HStack {
-                Text(tvShow.voteAverage.asNumberString())
-                    .font(.headline)
-                Image(systemName: "hands.clap")
+        HStack(alignment: .bottom) {
+            VStack(alignment: .leading) {
+                Text("\(tvShow.name)")
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                
+                HStack {
+                    Text(tvShow.voteAverage.asNumberString())
+                        .font(.headline)
+                    Image(systemName: "hands.clap")
+                }
+                
+                Text("\(locale.tvDetailsAirDate) \(tvShow.firstAirDate.formatDateString())")
+                    .font(.subheadline)
             }
             
-            Text("First air date: \(tvShow.firstAirDate.formatDateString())")
-                .font(.subheadline)
+            Spacer()
             
+            if reviewsVM.isLoading {
+                ProgressView()
+            } else {
+                ReviewInfoComponent(count: reviewsVM.reviewsList.count) {
+                    if reviewsVM.reviewsList.isEmpty {
+                        reviewsVM.showNoReviewsAlert.toggle()
+                    } else {
+                        reviewsVM.navigateToReviewsList()
+                    }
+                }
+                .alert(locale.tvDetailsnoReviews, isPresented: $reviewsVM.showNoReviewsAlert) {}
+            }
+            
+            navigationToReviewsList
         }.padding()
+    }
+    
+    private var navigationToReviewsList: some View {
+        NavigationLink(destination: ReviewsView(reviews: reviewsVM.reviewsList), isActive: $reviewsVM.navigateToReviews) {
+            EmptyView()
+        }
     }
 }
 
 #Preview {
-    MovieDetailsView(movie: DeveloperPreview.instance.movie)
-        .environmentObject(DeveloperPreview.instance.movieViewModel)
+    TVShowDetailsView(tvShow: DeveloperPreview.instance.tvShow)
+        .environmentObject(DeveloperPreview.instance.tvShowViewModel)
+        .environmentObject(DeveloperPreview.instance.reviewsViewModel)
 }

@@ -14,11 +14,13 @@ class MovieViewModel: ObservableObject {
     @Published var movieList: [Movie] = []
     @Published var movieSheet: Movie?
     @Published var isLoading: Bool = false
-    @Published var movieCredits: [Cast] = []
+    @Published var credits: [Cast] = []
+    @Published var showMoreCast: Bool = false
+
     
-    private var nextPage: String? = ApiPaths().getValue(api: .movies)
     private var constants = MovieChillConstants()
     private var movieRepository = MovieRepository()
+    private var creditsRepository = CreditsRepository()
     
     @Published var pageNumber: Int = 1
     
@@ -29,7 +31,7 @@ class MovieViewModel: ObservableObject {
     // MARK: movies
     func fetchMovies(shouldSetLoader: Bool = true) async {
         
-        guard !isLoading, let urlString = nextPage else { return }
+        guard !isLoading else { return }
         
         if shouldSetLoader {
             setIsLoading(to: true)
@@ -38,7 +40,7 @@ class MovieViewModel: ObservableObject {
         let pNumber = String(pageNumber)
         
         do {
-            let data  = try await movieRepository.getMovies(urlString: urlString, type: MovieModel.self, page: pNumber)
+            let data  = try await movieRepository.getMovies(type: MovieModel.self, page: pNumber)
             await updateMovieList(with: data, should: shouldSetLoader)
         } catch let error {
             await handleFetchError(error)
@@ -129,27 +131,23 @@ class MovieViewModel: ObservableObject {
     
     
     // MARK: credits / cast
-    func fetchMovieCredits(movieID: String) async {
-        
-        self.movieCredits.removeAll()
-        
-        let urlString = ApiPaths().getValue(api: .movieCredits, concatValue: movieID)
+    func fetchCredits(for id: String) async {
+        self.credits.removeAll()
         
         do {
-            let data = try await movieRepository.getMovieCredits(urlString: urlString, type: CreditsModel.self)
-            await updateMovieCredits(with: data)
+            let data = try await creditsRepository.getCredits(for: id, type: CreditsModel.self)
+            await updateCredits(with: data)
         } catch let error {
             await handleFetchError(error)
         }
     }
     
-    private func updateMovieCredits(with data: CreditsModel) async {
-        
-        var updatedCredits = data.cast.map { cast in
+    private func updateCredits(with data: CreditsModel) async {
+        let updatedCredits = data.cast.map { cast in
             cast.updateProfilePath(newPathProfile: ApiPaths().getValue(api: .posters, concatValue: cast.profilePath ?? ""))
         }
         
-        self.movieCredits.append(contentsOf: updatedCredits)
+        self.credits.append(contentsOf: updatedCredits)
         
         for credit in updatedCredits {
             if let poster = credit.profileFullPath {
@@ -169,20 +167,24 @@ class MovieViewModel: ObservableObject {
     }
     
     private func updateCastPoster(for cast: Cast, with image: Image) async {
-        if let index = movieCredits.firstIndex(where: { $0.id == cast.id }) {
+        if let index = credits.firstIndex(where: { $0.id == cast.id }) {
             var updatedCast = cast
             updatedCast.imageData = image
-            movieCredits[index] = updatedCast
+            credits[index] = updatedCast
         }
     }
     
-    func returnGenreName(genreID: Int) -> String {
-        for genre in constants.genres {
-            if(genreID == genre.id) {
-                return "\(genre.name) /"
+    /// if showMoreCast is false return only 4 cast members
+    func returnCreditsBasedOnShowMore() -> [Cast] {
+        if showMoreCast {
+            return credits
+        } else {
+            var fourCastArray: [Cast] = []
+            if !credits.isEmpty && credits.count > 4 {
+                fourCastArray.append(contentsOf: credits.prefix(4))
             }
+            return fourCastArray.isEmpty ? credits : fourCastArray
         }
-        return ""
     }
     
     private func setIsLoading(to newValue: Bool) {

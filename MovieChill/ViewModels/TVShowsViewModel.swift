@@ -14,16 +14,20 @@ class TVShowsViewModel: ObservableObject {
     @Published var tvShowsList: [TVModel] = []
     @Published var tvShowSheet: TVModel?
     @Published var isLoading: Bool = false
+    @Published var credits: [Cast] = []
+    @Published var showMoreCast: Bool = false
     
     private var nextPage: String? = ApiPaths().getValue(api: .tvShows)
     private var constants = MovieChillConstants()
     private var tvShowsRepository = TVRepository()
+    private var creditsRepository = CreditsRepository()
     
     @Published var pageNumber: Int = 1
     
     
     init() {}
     
+    // MARK: TVShows
     func fetchTVShows(shouldSetLoader: Bool = true) async {
         
         guard !isLoading, let urlString = nextPage else { return }
@@ -110,6 +114,65 @@ class TVShowsViewModel: ObservableObject {
             if let backdrop = tvShow.fullBackdropPath {
                 await fetchTVShowBackdropPoster(from: backdrop, for: tvShow)
             }
+        }
+    }
+    
+    // MARK: credits / cast
+    func fetchCredits(for id: String) async {
+        
+        self.credits.removeAll()
+        
+        do {
+            let data = try await creditsRepository.getCredits(for: id, isTV: true, type: CreditsModel.self)
+            await updateCredits(with: data)
+        } catch let error {
+            await handleFetchError(error)
+        }
+    }
+    
+    private func updateCredits(with data: CreditsModel) async {
+        let updatedCredits = data.cast.map { cast in
+            cast.updateProfilePath(newPathProfile: ApiPaths().getValue(api: .posters, concatValue: cast.profilePath ?? ""))
+        }
+        
+        self.credits.append(contentsOf: updatedCredits)
+        
+        for credit in updatedCredits {
+            if let poster = credit.profileFullPath {
+                await fetchCastPoster(from: poster, for: credit)
+            }
+        }
+    }
+    
+    func fetchCastPoster(from fullPosterPath: String, for cast: Cast) async {
+        do {
+            let data = try await tvShowsRepository.getTVShowPoster(urlString: fullPosterPath)
+            let image = Image(uiImage: data)
+            await updateCastPoster(for: cast, with: image)
+        } catch let error {
+            await handleFetchError(error)
+        }
+    }
+    
+    // MARK: Emir pitanje: da li self.credits[index]
+    private func updateCastPoster(for cast: Cast, with image: Image) async {
+        if let index = credits.firstIndex(where: { $0.id == cast.id }) {
+            var updatedCast = cast
+            updatedCast.imageData = image
+            self.credits[index] = updatedCast
+        }
+    }
+    
+    /// if showMoreCast is false return only 4 cast members
+    func returnCreditsBasedOnShowMore() -> [Cast] {
+        if showMoreCast {
+            return credits
+        } else {
+            var fourCastArray: [Cast] = []
+            if !credits.isEmpty && credits.count > 4 {
+                fourCastArray.append(contentsOf: credits.prefix(4))
+            }
+            return fourCastArray.isEmpty ? credits : fourCastArray
         }
     }
     

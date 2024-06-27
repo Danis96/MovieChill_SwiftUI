@@ -15,7 +15,7 @@ enum NetworkError: Error {
     case decodingFailed(Error)
 }
 
-class NetworkService {
+struct NetworkService {
     
     func fetchData<T: Decodable>(from urlString: String, as type: T.Type, queryItems: [URLQueryItem], headers: [String: String]) async throws -> T {
        
@@ -37,6 +37,7 @@ class NetworkService {
         do {
             let (data, _) = try await URLSession.shared.data(for: request)
             
+            /// When debug decoding
 //            if let string = String(data: data, encoding: .utf8) {
 //                print("Data string: \(string)")
 //            } else {

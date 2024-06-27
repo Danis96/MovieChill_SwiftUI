@@ -15,11 +15,11 @@ class TVRepository {
     
     func getTVShows<T: Decodable>(urlString: String, type: T.Type, page: String = "1") async throws -> TVModelResults {
         
-        print("url: \(urlString)")
-        print("page: \(page)")
-        
         do {
-            let data  = try await networkService.fetchData(from: urlString, as: TVModelResults.self, queryItems: setQueryItems(page: page), headers: headers)
+            let data = try await networkService.fetchData(from: urlString,
+                                                           as: TVModelResults.self,
+                                                           queryItems: setQueryItems(page: page),
+                                                           headers: ApiHeaders().getValue(type: .json_token))
             return data
         } catch let error {
             throw error
@@ -27,8 +27,6 @@ class TVRepository {
     }
     
     func getTVShowPoster(urlString: String) async throws -> UIImage {
-        
-        print("url: \(urlString)")
         
         guard let url = URL(string: urlString) else { throw URLError(.badURL)}
         
@@ -53,12 +51,5 @@ class TVRepository {
           URLQueryItem(name: "sort_by", value: "popularity.desc"),
         ]
         return queryItems
-    }
-    
-    private var headers: [String: String] {
-        return [
-            "accept": "application/json",
-            "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyZmZjYjQ5MDczMDA3ZWNkZTZiMzRjOTEyNTAzOTU4NCIsIm5iZiI6MTcxOTE3MjIxMC45NDAxNDYsInN1YiI6IjYyMzI0MTRmODNlZTY3MDAxYjI0OTkwYSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.jmJETuMM7QTCcw5UdOyNf1U4RiLPq50p1ika2BVBD3c"
-        ]
     }
 }

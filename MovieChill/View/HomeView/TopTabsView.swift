@@ -12,6 +12,8 @@ struct TopTabsView: View {
     @EnvironmentObject var movieVM: MovieViewModel
     @EnvironmentObject var tvShowVM: TVShowsViewModel
     
+    private var locale = LocaleStrings()
+    
     var body: some View {
         NavigationStack {
             ZStack {
@@ -96,10 +98,10 @@ extension TopTabsView {
     private var tabsItems: some View {
         VStack {
             switch tabVM.selectedTab.title {
-            case "Discover Movies":
+            case locale.ttvDiscoverMovies:
                 MovieView()
                     .environmentObject(movieVM)
-            case "TV":
+            case locale.ttvDiscoverTV:
                 TVShowView()
                     .environmentObject(tvShowVM)
             default:

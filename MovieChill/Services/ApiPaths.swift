@@ -12,6 +12,8 @@ enum APIS {
    case posters
    case tvShows
    case movieCredits
+   case tvCredits
+   case reviews
 }
 
 class ApiPaths {
@@ -19,7 +21,7 @@ class ApiPaths {
     private let baseUrl: String = "https://api.themoviedb.org/3/"
     private let posterUrl: String = "https://image.tmdb.org/t/p/original"
     
-    func getValue(api: APIS, concatValue: String = "") -> String {
+    func getValue(api: APIS, concatValue: String = "", concatValue2: String = "") -> String {
         switch api {
         case .movies:
             return self.baseUrl + "discover/movie"
@@ -29,6 +31,10 @@ class ApiPaths {
             return self.baseUrl + "discover/tv"
         case .movieCredits:
             return self.baseUrl + "movie/\(concatValue)/credits"
+        case .tvCredits:
+            return self.baseUrl + "tv/\(concatValue)/credits"
+        case .reviews:
+            return self.baseUrl + "\(concatValue)/\(concatValue2)/reviews"
         }
     }
 }

@@ -12,8 +12,8 @@ class TabViewModel: ObservableObject {
     @Published var selectedTab: TabItemModel
     
     let tabs: [TabItemModel] = [
-        TabItemModel(title: "Discover Movies", imageName: "house"),
-        TabItemModel(title: "TV", imageName: "magnifyingglass"),
+        TabItemModel(title: LocaleStrings().ttvDiscoverMovies, imageName: "house"),
+        TabItemModel(title: LocaleStrings().ttvDiscoverTV, imageName: "magnifyingglass"),
     ]
     
     init() {
