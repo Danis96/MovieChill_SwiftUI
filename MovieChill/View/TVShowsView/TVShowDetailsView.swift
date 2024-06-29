@@ -117,7 +117,9 @@ extension TVShowDetailsView {
     }
     
     private var navigationToReviewsList: some View {
-        NavigationLink(destination: ReviewsView(reviews: reviewsVM.reviewsList), isActive: $reviewsVM.navigateToReviews) {
+        NavigationLink(destination: ReviewsView(reviews: reviewsVM.reviewsList, onRefresh: {
+           await reviewsVM.fetchReviews(for: tvShow.televisionID, isTv: true)
+        }), isActive: $reviewsVM.navigateToReviews) {
             EmptyView()
         }
     }

@@ -10,11 +10,17 @@ import SwiftUI
 struct ReviewsView: View {
     
     let reviews: [ReviewModel]
+    let onRefresh: () async -> Void
     
     var body: some View {
         ScrollView {
             ForEach(reviews) { review in
                 reviewItem(review: review)
+            }
+        }
+        .refreshable {
+            Task {
+                await onRefresh()
             }
         }
     }
@@ -55,5 +61,7 @@ extension ReviewsView {
 }
 
 #Preview {
-    ReviewsView(reviews: DeveloperPreview.instance.reviewsList)
+    ReviewsView(reviews: DeveloperPreview.instance.reviewsList) {
+        print("ON REFRESH")
+    }
 }

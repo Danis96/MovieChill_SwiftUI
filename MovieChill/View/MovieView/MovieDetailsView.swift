@@ -125,7 +125,9 @@ extension MovieDetailsView {
     }
     
     private var navigationToReviews: some View {
-        NavigationLink(destination: ReviewsView(reviews: reviewsVM.reviewsList), isActive: $reviewsVM.navigateToReviews) {
+        NavigationLink(destination: ReviewsView(reviews: reviewsVM.reviewsList, onRefresh: {
+            await reviewsVM.fetchReviews(for: movie.movieID)
+        }), isActive: $reviewsVM.navigateToReviews) {
             EmptyView()
         }
     }

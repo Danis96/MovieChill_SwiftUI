@@ -28,15 +28,14 @@ class RatingViewModel: ObservableObject {
         do {
             let data = try await ratingRepo.addRating(for: id, value: ratingValue, isTV: isTV, type: ResponseModel.self)
             print("Code: \(data.statusCode)")
-            print("Status msg: \(data.statusMessage)")
             setLoader(value: false)
-            await handleRatingData(data: data)
+            handleRatingData(data: data)
         } catch let error {
             await handleFetchError(error)
         }
     }
     
-    private func handleRatingData(data: ResponseModel) async {
+    private func handleRatingData(data: ResponseModel) {
         if data.success {
             showRatingSuccess = true
         }
