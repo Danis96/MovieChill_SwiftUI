@@ -10,10 +10,11 @@ import SwiftUI
 @main
 struct MovieChillApp: App {
     
-    @StateObject  var tabViewModel = TabViewModel()
-    @StateObject  var movieViewModel = MovieViewModel()
-    @StateObject  var tvShowViewModel = TVShowsViewModel()
-    @StateObject  var reviewsViewModel = ReviewsViewModel()
+    @StateObject var tabViewModel = TabViewModel()
+    @StateObject var movieViewModel = MovieViewModel()
+    @StateObject var tvShowViewModel = TVShowsViewModel()
+    @StateObject var reviewsViewModel = ReviewsViewModel()
+    @StateObject var ratingViewModel = RatingViewModel()
     
     var body: some Scene {
         WindowGroup {
@@ -25,5 +26,6 @@ struct MovieChillApp: App {
         .environmentObject(movieViewModel)
         .environmentObject(tvShowViewModel)
         .environmentObject(reviewsViewModel)
+        .environmentObject(ratingViewModel)
     }
 }

@@ -10,7 +10,6 @@ import Foundation
 
 struct LocaleStrings {
     
-    
     // MovieView
     let movieViewBtnNext: String  = "Next"
     let movieViewBtnPrevious: String = "Previous"
@@ -41,5 +40,14 @@ struct LocaleStrings {
     let movieDetailsReleaseDate: String  = "Release date:"
     let movieDetailsOverview: String  = "Overview"
     let movieDetailsnoReviews: String  = "Sorry, no reviews"
-
+    
+    // Rating View
+    let ratingYourRate: String  = "Your rate matter!"
+    let ratingInfoText1: String  = "Slide the scale below to choose a rating for the movie or TV show. Your rating helps us personalize your recommendations and improve your experience."
+    let ratingInfoText2: String  = "Once you've selected the value that best represents your opinion, press 'Done' to save your rating. You can always come back and adjust it later if you change your mind.\nThank you for sharing your feedback!"
+    let ratingInfoText3: String  = "Thank you for sharing your feedback!"
+    let ratingDoneButton: String  = "Done"
+    let ratingCurrentR: String  = "Current rating"
+    let ratingAddRating: String  = "Add rating"
+    
 }

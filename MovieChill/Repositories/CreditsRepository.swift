@@ -16,13 +16,7 @@ struct CreditsRepository {
     
     func getCredits<T: Decodable>(for id: String, isTV: Bool = false, type: T.Type) async throws -> CreditsModel {
         
-        var url: String = ""
-        
-        if isTV {
-            url = ApiPaths().getValue(api: .tvCredits, concatValue: id)
-        } else {
-            url = ApiPaths().getValue(api: .movieCredits, concatValue: id)
-        }
+        var url: String = ApiPaths().getValue(api: isTV ? .tvCredits : .movieCredits, concatValue: id)
         
         do {
             let data = try await networkService.fetchData(from: url,

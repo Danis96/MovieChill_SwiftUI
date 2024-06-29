@@ -55,7 +55,36 @@ struct NetworkService {
         }
     }
     
-    
-    
+    func postData<T: Decodable>(for urlString: String, as type: T.Type, postData: Data, headers: [String: String]) async throws -> T {
+        
+        guard let url = URL(string: urlString) else {
+            throw NetworkError.invalidURL
+        }
+        
+        var components = URLComponents(url: url, resolvingAgainstBaseURL: true)!
+        
+        var request = URLRequest(url: components.url!)
+        request.httpMethod = "POST"
+        request.timeoutInterval = 10
+        request.allHTTPHeaderFields = headers
+        
+        request.httpBody = postData
+        
+        do {
+            let (data, _) = try await URLSession.shared.data(for: request)
+            
+            // When debug decoding
+            if let string = String(data: data, encoding: .utf8) {
+                print("Data string: \(string)")
+            } else {
+                print("Failed to parse data")
+            }
+            
+            let decodedData = try JSONDecoder().decode(T.self, from: data)
+            return decodedData
+        } catch let error {
+            throw NetworkError.requestFailed(error)
+        }
+    }
     
 }

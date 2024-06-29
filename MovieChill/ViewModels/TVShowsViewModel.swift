@@ -104,6 +104,7 @@ class TVShowsViewModel: ObservableObject {
                 let imgBack = updatedTVShows.backdropData {
                 updatedTVShows.detailsImageList = [imgPoster, imgBack]
             }
+            // update
             tvShowsList[index] = updatedTVShows
         }
     }
@@ -159,7 +160,8 @@ class TVShowsViewModel: ObservableObject {
         if let index = credits.firstIndex(where: { $0.id == cast.id }) {
             var updatedCast = cast
             updatedCast.imageData = image
-            self.credits[index] = updatedCast
+            // update
+            credits[index] = updatedCast
         }
     }
     

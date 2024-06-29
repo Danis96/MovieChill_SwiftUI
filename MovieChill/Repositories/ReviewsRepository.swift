@@ -16,13 +16,7 @@ struct ReviewsRepository {
     
     func getReviews<T: Decodable>(id: Int, for tv: Bool, type: T.Type) async throws -> ReviewsResultModel {
         
-        var urlString: String = ""
-        
-        if tv {
-            urlString = ApiPaths().getValue(api: .reviews, concatValue: "tv", concatValue2: String(id))
-        } else {
-            urlString = ApiPaths().getValue(api: .reviews, concatValue: "movie", concatValue2: String(id))
-        }
+        var urlString: String = ApiPaths().getValue(api: .reviews, concatValue: tv ? "tv" : "movie", concatValue2: String(id))
         
         do {
             let data = try await networkService.fetchData(from: urlString,

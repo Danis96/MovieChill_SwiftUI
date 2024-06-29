@@ -11,6 +11,7 @@ struct MovieDetailsView: View {
     
     @EnvironmentObject private var movieVM: MovieViewModel
     @EnvironmentObject private var reviewsVM: ReviewsViewModel
+    @EnvironmentObject private var ratingsVM: RatingViewModel
     let movie: Movie
 
     private let locale = LocaleStrings()
@@ -26,6 +27,11 @@ struct MovieDetailsView: View {
                     Divider()
                     
                     overviewSection
+                    
+                    AddRatingComponent(presentAlert: $ratingsVM.showRatingAddSheet, sliderValue: $ratingsVM.ratingValue) {
+                        await ratingsVM.postRating(id: String(movie.movieID))
+                    }.padding(.horizontal)
+                    .alert("Success", isPresented: $ratingsVM.showRatingSuccess) {}
                     
                     Divider()
                     
@@ -129,4 +135,5 @@ extension MovieDetailsView {
     MovieDetailsView(movie: DeveloperPreview.instance.movie)
         .environmentObject(DeveloperPreview.instance.movieViewModel)
         .environmentObject(DeveloperPreview.instance.reviewsViewModel)
+        .environmentObject(DeveloperPreview.instance.ratingViewModel)
 }

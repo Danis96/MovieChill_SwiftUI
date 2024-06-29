@@ -62,13 +62,6 @@ extension MovieView {
                     index: index,
                     geometry: geometry,
                     onTapPressed: {
-                        // MARK: Emir pitanje: taskovi
-                        // Kreiran je task unutar componente | da li je to oke za raditi ili sve fje sto dolaze trebaju biti vec definisane
-                        
-                        /*
-                           onCardPressed vec u sebi ima definisan Task ali i unutar komponente imam def task na ovu fju
-                           redundant???
-                         */
                         await onCardPressed(movie: movie, index: index)
                     },
                     title: movie.title,

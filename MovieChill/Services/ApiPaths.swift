@@ -14,6 +14,7 @@ enum APIS {
    case movieCredits
    case tvCredits
    case reviews
+   case rating
 }
 
 class ApiPaths {
@@ -35,6 +36,8 @@ class ApiPaths {
             return self.baseUrl + "tv/\(concatValue)/credits"
         case .reviews:
             return self.baseUrl + "\(concatValue)/\(concatValue2)/reviews"
+        case .rating:
+            return self.baseUrl + "\(concatValue)/\(concatValue2)/rating"
         }
     }
 }

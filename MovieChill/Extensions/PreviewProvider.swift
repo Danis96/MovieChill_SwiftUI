@@ -38,6 +38,10 @@ class DeveloperPreview {
     private(set) lazy var reviewsViewModel: ReviewsViewModel = {
         ReviewsViewModel()
     }()
+
+    private(set) lazy var ratingViewModel: RatingViewModel = {
+        RatingViewModel()
+    }()
     
     let movie = Movie(adult: false, backdropPath: "/xg27NrXi7VXCGUr7MG75UqLl6Vg.jpg", fullPosterPath: "", fullBackdropPath: "", genreIDS: [16,10751,18,12,35], movieID: 1022789, originalLanguage: .en, originalTitle: "Inside Out 2", overview: "Teenager Riley's mind headquarters is undergoing a sudden demolition to make room for something entirely unexpected: new Emotions! Joy, Sadness, Anger, Fear and Disgust, who’ve long been running a successful operation by all accounts, aren’t sure how to feel when Anxiety shows up. And it looks like she’s not alone.", popularity: 8282.191, posterPath: "/oxxqiyWrnM0XPnBtVe9TgYWnPxT.jpg", releaseDate: "2024-06-11", title: "Inside Out 2", video: false, voteAverage: 7.8, voteCount: 660, detailsImageList: [Image("testApesPoster"), Image("testPoster")] )
 
@@ -70,8 +74,9 @@ class DeveloperPreview {
     let reviewsList: [ReviewModel] = [
         ReviewModel(author: "CinemaSerf", authorDetails: AuthorDetails(name: "CinemaSerf", username: "Geronimo1967", avatarPath: "/1kks3YnVkpyQxzw36CObFPvhL5f.jpg", rating: 7), content: "This is much more like it. William Shatner leads our intrepid band of intergalactic explorers on an all action adventure to save the universe for the evil super-intellect of \"Khan\" (a wonderfully hammy Ricardo Montalban) as he escapes from imprisonment on a desolate desert planet and seeks violent revenge on \"Admiral Kirk\". This has none of the philosophical pretensions of the first film, it is just a sci-fi shoot 'em up with great visual effects and the occasional chunk of Herman Melville thrown in for theatrical good measure as they strive to stop \"genesis\" from rearranging everyone's chronometers. Despite the intervention of some interlopers (all part of \"Kirk\", his past and his love life), the original crew all bond together nicely as we trek towards an exciting conclusion that leaves us well set for \"Star Trek III\".", createdAt: "2022-07-01T20:26:13.566Z", id: "62bf5865af6e94046c7070de", updatedAt: "2023-06-08T08:01:54.005Z", url: "https://www.themoviedb.org/review/62bf5865af6e94046c7070de"),
         ReviewModel(author: "CinemaSerf", authorDetails: AuthorDetails(name: "CinemaSerf", username: "Geronimo1967", avatarPath: "/1kks3YnVkpyQxzw36CObFPvhL5f.jpg", rating: 7), content: "This is much more like it. William Shatner leads our intrepid band of intergalactic explorers on an all action adventure to save the universe for the evil super-intellect of \"Khan\" (a wonderfully hammy Ricardo Montalban) as he escapes from imprisonment on a desolate desert planet and seeks violent revenge on \"Admiral Kirk\". This has none of the philosophical pretensions of the first film, it is just a sci-fi shoot 'em up with great visual effects and the occasional chunk of Herman Melville thrown in for theatrical good measure as they strive to stop \"genesis\" from rearranging everyone's chronometers. Despite the intervention of some interlopers (all part of \"Kirk\", his past and his love life), the original crew all bond together nicely as we trek towards an exciting conclusion that leaves us well set for \"Star Trek III\".", createdAt: "2022-07-01T20:26:13.566Z", id: "62bf5865af6e94046c7070de", updatedAt: "2023-06-08T08:01:54.005Z", url: "https://www.themoviedb.org/review/62bf5865af6e94046c7070de")
-       
     ]
+    
+    let alertTest: Bool = false
     
     private init() { }
     
