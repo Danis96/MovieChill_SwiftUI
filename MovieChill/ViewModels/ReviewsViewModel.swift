@@ -15,12 +15,15 @@ class ReviewsViewModel: ObservableObject {
     @Published var isLoading: Bool = true
     @Published var navigateToReviews: Bool = false
     
+    private var reviewsRepository: ReviewsRepository
+    
     init() {
         self.navigateToReviews = false
         self.isLoading = false
+        self.reviewsRepository = ReviewsRepository()
     }
     
-    private var reviewsRepository = ReviewsRepository()
+    
     
     func fetchReviews(for id: Int, isTv: Bool = false) async {
         isLoading = true

@@ -15,6 +15,7 @@ struct MovieChillApp: App {
     @StateObject var tvShowViewModel = TVShowsViewModel()
     @StateObject var reviewsViewModel = ReviewsViewModel()
     @StateObject var ratingViewModel = RatingViewModel()
+    @StateObject var certificationViewModel = CertificationViewModel()
     
     var body: some Scene {
         WindowGroup {
@@ -27,5 +28,6 @@ struct MovieChillApp: App {
         .environmentObject(tvShowViewModel)
         .environmentObject(reviewsViewModel)
         .environmentObject(ratingViewModel)
+        .environmentObject(certificationViewModel)
     }
 }

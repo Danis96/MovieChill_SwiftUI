@@ -8,8 +8,10 @@
 import Foundation
 import SwiftUI
 
+@MainActor
 class TabViewModel: ObservableObject {
     @Published var selectedTab: TabItemModel
+    @Published var navigateToCertifications: Bool = false
     
     let tabs: [TabItemModel] = [
         TabItemModel(title: LocaleStrings().ttvDiscoverMovies, imageName: "house"),

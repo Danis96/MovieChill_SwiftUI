@@ -11,6 +11,7 @@ struct TopTabsView: View {
     @EnvironmentObject var tabVM: TabViewModel
     @EnvironmentObject var movieVM: MovieViewModel
     @EnvironmentObject var tvShowVM: TVShowsViewModel
+    @EnvironmentObject var certificationVM: CertificationViewModel
     
     private var locale = LocaleStrings()
     
@@ -22,6 +23,7 @@ struct TopTabsView: View {
                     tabsList
                     tabsItems
                 }
+                navigationToCertifications
             }
             .toolbar(content: {
                 ToolbarItem(placement: .topBarLeading) {
@@ -38,6 +40,7 @@ struct TopTabsView: View {
                     await movieVM.fetchBackdropPosters()
                     await tvShowVM.fetchTVShows()
                     await tvShowVM.fetchBackdropPosters()
+                    await certificationVM.fetchCertifications()
                 }
             }
             
@@ -56,7 +59,9 @@ extension TopTabsView {
     }
     
     private var toolbarMenuItem: some View {
-        Button(action: {}, label: {
+        Button(action: {
+            tabVM.navigateToCertifications.toggle()
+        }, label: {
             Image(systemName: "pedal.clutch.fill")
                 .foregroundStyle(Color("TextColor"))
         })
@@ -110,6 +115,17 @@ extension TopTabsView {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
+    
+    
+    private var navigationToCertifications: some View {
+        NavigationLink(destination: CertificationsView(certificationList: certificationVM.certificationList, onRefresh: {
+            await certificationVM.fetchCertifications()
+        }), isActive: $tabVM.navigateToCertifications) {
+            EmptyView()
+        }
+    }
+    
+    
 }
 
 #Preview {
@@ -117,4 +133,5 @@ extension TopTabsView {
         .environmentObject(DeveloperPreview.instance.tabsViewModel)
         .environmentObject(DeveloperPreview.instance.movieViewModel)
         .environmentObject(DeveloperPreview.instance.tvShowViewModel)
+        .environmentObject(DeveloperPreview.instance.certificationViewModel)
 }

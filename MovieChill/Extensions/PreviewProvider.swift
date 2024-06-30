@@ -42,6 +42,10 @@ class DeveloperPreview {
     private(set) lazy var ratingViewModel: RatingViewModel = {
         RatingViewModel()
     }()
+
+    private(set) lazy var certificationViewModel: CertificationViewModel = {
+        CertificationViewModel()
+    }()
     
     let movie = Movie(adult: false, backdropPath: "/xg27NrXi7VXCGUr7MG75UqLl6Vg.jpg", fullPosterPath: "", fullBackdropPath: "", genreIDS: [16,10751,18,12,35], movieID: 1022789, originalLanguage: .en, originalTitle: "Inside Out 2", overview: "Teenager Riley's mind headquarters is undergoing a sudden demolition to make room for something entirely unexpected: new Emotions! Joy, Sadness, Anger, Fear and Disgust, who’ve long been running a successful operation by all accounts, aren’t sure how to feel when Anxiety shows up. And it looks like she’s not alone.", popularity: 8282.191, posterPath: "/oxxqiyWrnM0XPnBtVe9TgYWnPxT.jpg", releaseDate: "2024-06-11", title: "Inside Out 2", video: false, voteAverage: 7.8, voteCount: 660, detailsImageList: [Image("testApesPoster"), Image("testPoster")] )
 
@@ -77,6 +81,18 @@ class DeveloperPreview {
     ]
     
     let alertTest: Bool = false
+    
+    let certificationList: [CertificationGroup] = [
+      CertificationGroup(certifications: [
+         Certification(certification: "Danis", meaning: "Test", order: 2)
+      ], country: "BiH"),
+      CertificationGroup(certifications: [
+         Certification(certification: "Title", meaning: "Test", order: 4)
+      ], country: "Croatia"),
+      CertificationGroup(certifications: [
+         Certification(certification: "Title", meaning: "Test", order: 14)
+      ], country: "USA")
+    ]
     
     private init() { }
     

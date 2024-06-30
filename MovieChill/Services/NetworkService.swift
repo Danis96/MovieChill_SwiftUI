@@ -38,11 +38,11 @@ struct NetworkService {
             let (data, _) = try await URLSession.shared.data(for: request)
             
             /// When debug decoding
-//            if let string = String(data: data, encoding: .utf8) {
-//                print("Data string: \(string)")
-//            } else {
-//                print("Failed to parse data")
-//            }
+            if let string = String(data: data, encoding: .utf8) {
+                print("Data string: \(string)")
+            } else {
+                print("Failed to parse data")
+            }
             
             let decodedData = try JSONDecoder().decode(T.self, from: data)
             
@@ -61,7 +61,7 @@ struct NetworkService {
             throw NetworkError.invalidURL
         }
         
-        var components = URLComponents(url: url, resolvingAgainstBaseURL: true)!
+        let components = URLComponents(url: url, resolvingAgainstBaseURL: true)!
         
         var request = URLRequest(url: components.url!)
         request.httpMethod = "POST"
@@ -74,11 +74,11 @@ struct NetworkService {
             let (data, _) = try await URLSession.shared.data(for: request)
             
             // When debug decoding
-            if let string = String(data: data, encoding: .utf8) {
-                print("Data string: \(string)")
-            } else {
-                print("Failed to parse data")
-            }
+//            if let string = String(data: data, encoding: .utf8) {
+//                print("Data string: \(string)")
+//            } else {
+//                print("Failed to parse data")
+//            }
             
             let decodedData = try JSONDecoder().decode(T.self, from: data)
             return decodedData
