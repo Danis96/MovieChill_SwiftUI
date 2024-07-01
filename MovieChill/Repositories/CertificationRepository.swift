@@ -12,7 +12,7 @@ struct CertificationRepository {
     
    private var networkService = NetworkService()
     
-    func getCertificates<T: Decodable>(forTV isTV: Bool = false, type: T.Type) async throws -> CertificationsData {
+    func getCertifications<T: Decodable>(forTV isTV: Bool = false, type: T.Type) async throws -> CertificationsData {
         
         let url: String = ApiPaths().getValue(api: .certifications, concatValue: isTV ? "tv" : "movie")
         

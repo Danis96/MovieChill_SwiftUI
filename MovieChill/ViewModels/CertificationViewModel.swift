@@ -26,7 +26,7 @@ class CertificationViewModel: ObservableObject {
         guard let certRepo = certificationRepository else { return  }
         
         do {
-            let data = try await certRepo.getCertificates(type: CertificationsData.self)
+            let data = try await certRepo.getCertifications(type: CertificationsData.self)
             await handleData(data: data)
         } catch let error {
             await handleFetchError(error)
